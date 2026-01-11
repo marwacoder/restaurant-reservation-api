@@ -60,6 +60,8 @@ Create a `.env` file in the project root:
 NODE_ENV=development
 PORT=5000
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/restaurant
+REDIS_PORT=
+REDIS_HOST=
 ```
 
 > When running with Docker, the database host must be `db` instead of `localhost`.
@@ -178,7 +180,6 @@ npm run test
 
 ## Scalability Considerations
 
-- Introduce Redis caching
 - Use database read replicas
 - Add background workers
 - Container orchestration with Kubernetes
