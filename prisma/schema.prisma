@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Restaurant {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  openingTime String // HH:mm
+  closingTime String // HH:mm
+  tables      Table[]
+  createdAt   DateTime @default(now())
+}
+
+model Table {
+  id           String        @id @default(uuid())
+  tableNumber  Int
+  capacity     Int
+  restaurantId String
+  restaurant   Restaurant    @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  reservations Reservation[]
+
+  @@unique([restaurantId, tableNumber])
+}
+
+model Reservation {
+  id           String            @id @default(uuid())
+  customerName String
+  phone        String
+  partySize    Int
+  startTime    DateTime
+  endTime      DateTime
+  status       ReservationStatus @default(CONFIRMED)
+
+  tableId String
+  table   Table  @relation(fields: [tableId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([tableId, startTime, endTime])
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
